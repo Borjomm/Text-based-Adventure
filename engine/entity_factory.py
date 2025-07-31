@@ -47,14 +47,11 @@ class EntityFactory:
             ap = data.get('start_ap', 1)
             max_ap = data.get('max_ap', 3)
 
-            can_attack = data.get('can_attack', True)
-            can_heal = data.get('can_heal', False)
-
             abilities = data.get('abilities')
             if abilities:
                 ability_list = self.ability_factory.get_ability_list(abilities)
 
-            return (EntityBlueprint(EntityType.ENEMY, id, name_key, health, ap, max_ap, attack, speed, can_attack, can_heal, ability_list), probability)
+            return (EntityBlueprint(EntityType.ENEMY, id, name_key, health, ap, max_ap, attack, speed, ability_list), probability)
 
         with open(filepath, 'r', encoding="utf-8") as f:
             data: dict = yaml.safe_load(f)
@@ -87,7 +84,7 @@ class EntityFactory:
             ap = data.get("start_ap", 1)
             max_ap = data.get("max_ap", 3)
 
-            name_key = "unloc.player_name"
+            name_key = f"player.{class_str}"
 
             abilities = data.get('abilities')
             if abilities:
@@ -105,8 +102,6 @@ class EntityFactory:
                     max_ap=max_ap,
                     attack=attack,
                     speed=speed,
-                    can_attack=True,
-                    can_heal=True,
                     abilities=ability_list
                 ),
             )
@@ -124,8 +119,9 @@ class EntityFactory:
         return self.create_entity(world, blueprint, name)
 
     def create_entity(self, world: World, blueprint: EntityBlueprint, name: Optional[str] = None) -> int:
-        def make_localization(name_key) -> LocalizationComponent:
-            return LocalizationComponent(name_key, f"{name_key}_flair", f"{name_key}_attack", f"{name_key}_miss", f"{name_key}_heal", f"{name_key}_useless_heal")
+        def make_localization(name_key, unloc_name = None) -> LocalizationComponent:
+            name = unloc_name if unloc_name else name_key
+            return LocalizationComponent(name, f"{name_key}_flair", f"{name_key}_attack", f"{name_key}_miss", f"{name_key}_heal", f"{name_key}_useless_heal")
 
         id = world.create_entity()
         component_list = []
@@ -135,8 +131,10 @@ class EntityFactory:
         elif blueprint.type == EntityType.ENEMY:
             component_list.append(IsEnemyComponent())
         component_list.append(StatsComponent(health=blueprint.health, max_health=blueprint.health, attack=blueprint.attack, attack_offset=Defaults.ATTACK_OFFSET.value, ap=blueprint.ap, max_ap=blueprint.max_ap, speed=blueprint.speed))
-        
-        component_list.append(make_localization(blueprint.name_key))
+        if blueprint.type == EntityType.PLAYER:
+            component_list.append(make_localization(blueprint.name_key, unloc_name="unloc.player_name"))
+        else:
+            component_list.append(make_localization(blueprint.name_key))
         component_list.append(BuffsComponent())
         component_list.append(IsAliveComponent())
         if blueprint.abilities:

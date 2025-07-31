@@ -17,6 +17,4 @@ class EntityBlueprint:
     max_ap: int
     attack: int
     speed: int
-    can_attack: bool
-    can_heal: bool
     abilities: list[AbilityBlueprint]
