@@ -1,0 +1,10 @@
+buff_end: "Усиление {BUFF} закончилось для {ENTITY_NAME}"
+null_ap: ""
+consume_ap: ": {AP} ОД"
+give_ap: ": +{AP} ОД"
+
+basic_attack: Обычная атака
+basic_attack_tooltip: Attack the target for moderate damage
+
+player_heal: Исцеление
+player_heal_tooltip: Instantly heal {HEALTH} hp

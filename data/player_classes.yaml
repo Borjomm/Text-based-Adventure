@@ -1,0 +1,46 @@
+1:
+  class: warrior
+  health: 100
+  attack: 10
+  start_ap: 3
+  max_ap: 3
+  speed: 100
+  abilities:
+    - id: basic_attack
+    - id: player_heal
+      scope: SELF
+      value: 20
+      ap_cost: 2
+    - id: battle_cry
+      scope: SELF
+      bonus: 0.5 #+50%
+      ap_cost: 3
+      turns: 2
+
+2:
+  class: thief
+  health: 80
+  attack: 12
+  start_ap: 1
+  max_ap: 3
+  speed: 120
+  abilities:
+    - id: basic_attack
+    - id: player_heal
+      scope: SELF
+      value: 15
+      ap_cost: 1
+
+3:
+  class: mage
+  health: 70
+  attack: 8
+  start_ap: 2
+  max_ap: 5
+  speed: 110
+  abilities:
+    - id: basic_attack
+    - id: player_heal
+      scope: ALLIES
+      value: 20
+      ap_cost: 1

@@ -1,0 +1,4 @@
+#Stub for testing
+warrior_attack: "Ты атакуешь {DAMAGE}"
+warrior_heal: "Ты хилишь {HEALTH}"
+warrior_useless_heal: "Ты юхилишь"

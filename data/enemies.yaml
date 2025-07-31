@@ -1,0 +1,39 @@
+100:
+  name: goblin
+  health: 50
+  attack: 5
+  speed: 100
+  probability: 1.0
+  abilities:
+    - id: basic_attack
+    - id: battle_cry
+      scope: SELF
+      bonus: 0.3
+      ap_cost: 3
+      turns: 2
+
+
+101:
+  name: ranger
+  health: 30
+  attack: 8
+  speed: 140
+  advantage: true
+  probability: 0.6
+  abilities:
+    - id: basic_attack
+    - id: player_heal
+      scope: ALLIES
+      value: 15
+      ap_cost: 2
+
+
+
+102:
+  name: orc
+  health: 80
+  attack: 8
+  speed: 90
+  probability: 0.2
+  abilities:
+    - id: basic_attack

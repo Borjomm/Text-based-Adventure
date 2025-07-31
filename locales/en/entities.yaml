@@ -1,0 +1,12 @@
+health_reminder: "{NAME} has {HEALTH} health left!"
+dead_reminder: "{NAME} has died!"
+
+goblin: Goblin
+goblin_flair: You have encountered a goblin! Prepare for a battle!
+goblin_attack: Goblin attacks you, dealing {DAMAGE} damage!
+ranger: Ranger
+ranger_flair: A ranger is shooting at you! Prepare for a battle!
+ranger_attack: Ranger shoots at you, dealing {DAMAGE} damage!
+orc: Orc
+orc_flair: You see an orc running towards you! Prepare for a tough battle!
+orc_attack: Orc slashes you, dealing {DAMAGE} damage!

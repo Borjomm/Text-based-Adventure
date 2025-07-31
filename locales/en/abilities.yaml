@@ -1,0 +1,18 @@
+buff_end: "Buff {BUFF} has ended for {ENTITY_NAME}"
+null_ap: ""
+consume_ap: ": {AP} AP"
+give_ap: ": +{AP} AP"
+
+basic_attack: "Basic attack"
+basic_attack_tooltip: Attack the target for moderate damage
+
+player_heal: "Heal"
+player_heal_tooltip: Instantly heal {HEALTH} hp
+player_heal_message: "{ENTITY_NAME} heals {TARGET_NAME} for {HEALTH} hp"
+player_self_heal_message: "{ENTITY_NAME} heals themselves for {HEALTH} hp"
+player_useless_heal_message: "{ENTITY_NAME} tried to use a healing ability, but failed miserably"
+
+battlecry : "Battlecry"
+battlecry_tooltip: "Give an attack bonus of {BONUS}%"
+battlecry_message: "{ENTITY_NAME} buffs {TARGET_NAME}'s attack for {BONUS}%"
+battlecry_message_self: "{ENTITY_NAME} buffs their attack for {BONUS}%"

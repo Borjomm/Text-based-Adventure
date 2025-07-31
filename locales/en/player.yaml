@@ -1,0 +1,4 @@
+#Stub for testing
+warrior_attack: "You attac for {DAMAGE}"
+warrior_heal: "{ENTITY_NAME} "
+warrior_useless_heal: "You uheal"

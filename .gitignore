@@ -1,0 +1,14 @@
+.vscode/
+
+.env
+*.key
+*.pem
+
+__pycache__/
+*.pyc
+
+output.txt
+tester.py
+test.yaml
+unite.ps1
+latest.log

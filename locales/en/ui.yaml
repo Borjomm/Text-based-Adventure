@@ -1,0 +1,37 @@
+
+title: "\nTITLE SCREEN"
+new_game: New game
+load_game: Load game
+settings: Settings
+exit: Exit game
+tooltip_main: Select the option. Press '[log_key]' to access the log.
+tooltip_exit: Press '[yes_key]' to confirm exit. Press '[no_key]' to abandon
+change_language: Change language
+en: English
+ru: Russian
+log_key: Toggle log
+quit_key: Back/Exit
+yes_key: Confirm
+no_key: Deny
+back: Back
+to_title: To title screen
+tooltip_settings: Press '[quit_key]' to go back, '[tab_key]' to select a tab
+language: Language
+controls: Controls
+create_character: "\nCreate your character"
+blank_name: Name cannot be blank!
+enter_name: Name
+select_class: Class
+warrior: Warrior
+thief: Thief
+mage: Mage
+start_game: Start game
+creator_tooltip: ""
+battle_screen: "\nBattle!"
+hero_stats: "{NAME}: {HP}/{MAX_HP} health – {AP}/{MAX_AP} action points"
+enemy_stats: "{NAME}: {HP}/{MAX_HP} health - {AP}/{MAX_AP} action points"
+battlefield: Battlefield
+empty: ""
+battle_log: "Battle log"
+actions: "Actions:"
+enemy_turn: Enemy turn

@@ -1,0 +1,16 @@
+#CONFIG
+BASE_SETTINGS_PATH = "settings"
+MAIN_CONFIG_PATH = "main.cfg"
+KEY_CONFIG_PATH = "keys.cfg"
+
+#LOGGER
+LOG_FILE = "latest.log"
+MAX_LOG_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+
+#LOCALIZATION
+LANGUAGES = ["en", "ru"]
+DEFAULT_LANG = "en"
+ALWAYS_LOADED = {"ui"}
+
+BASIC_ABILITY_MAP = {}
+UNIQUE_ABILITY_MAP = {}

@@ -1,0 +1,37 @@
+
+title: "\nГЛАВНЫЙ ЭКРАН"
+new_game: Новая игра
+load_game: Загрузить игру
+settings: Настройки
+exit: Выйти
+tooltip_main: Выберете опцию. Нажмите '[log_key]' для доступа к логу.
+tooltip_exit: Нажмите '[yes_key]' чтобы выйти. Нажмите '[no_key]' для отмены
+change_language: Сменить язык
+en: Английский
+ru: Русский
+log_key: Переключить лог
+quit_key: Назад/Выйти
+yes_key: Принять
+no_key: Отклонить
+back: Назад
+to_title: На главный экран
+tooltip_settings: Нажмите '[quit_key]', чтобы вернуться, '[tab_key]', чтобы переключаться между вкладками
+language: Язык
+controls: Управление
+create_character: "\nСоздай своего персонажа"
+enter_name: Имя
+select_class: Класс
+warrior: Воин
+thief: Вор
+mage: Маг
+start_game: Начать игру
+blank_name: Имя не может быть пустым!
+creator_tooltip: ""
+battle_screen: "\nБитва!"
+hero_stats: "{NAME}: {HP}/{MAX_HP} здоровья – {AP}/{MAX_AP} очков"
+enemy_stats: "{NAME}: {HP}/{MAX_HP} здоровья - {AP}/{MAX_AP} очков"
+battlefield: Поле сражения
+empty: ""
+battle_log: Журнал сражения
+actions: "Действия:"
+enemy_turn: Ход противника
