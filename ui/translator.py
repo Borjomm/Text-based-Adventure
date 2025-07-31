@@ -12,7 +12,7 @@ class LocalizationManager:
         valid_lang = lang in LANGUAGES
         self.current_lang = lang if valid_lang else DEFAULT_LANG
         self._cache: Dict[str, Dict[str, str]] = {}
-        self.untranslatable = set()
+        self._unloc = {}
 
         # Preload always-needed categories like UI
         self._always_loaded = ALWAYS_LOADED
@@ -43,15 +43,15 @@ class LocalizationManager:
                 loaded = {}
             self._cache[category] = loaded
 
-    def add_to_unlocalizable(self, key: str):
-        self.untranslatable.add(key)
-
+    def add_unlocalizable(self, key: str, value):
+        self._unloc[key] = value
+        
     def translate(self, key: str) -> str:
-        if key in self.untranslatable:
-            return key
         if '.' not in key:
             raise ValueError(f"Localization key must be in format 'category.key', recieved {key}")
         category, inner_key = key.split('.', 1)
+        if category == "unloc":
+            return self._unloc.get(inner_key, f"[Missing_unloc:{key}]")
         if category not in self._cache:
             self._load_file(category)
         return self._cache[category].get(inner_key, f"[Missing:{key}]")

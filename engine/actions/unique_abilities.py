@@ -8,6 +8,7 @@ from engine.components.living_entity_components import InBattleComponent, IsAliv
 from engine.world import World
 from engine.systems.battle_systems import process_heal, apply_buff, consume_ap
 from util.decorators import register_ability
+from util import wrap_key
 
 from events.events import StatsChangeEvent, BattleLogEvent
 
@@ -61,12 +62,12 @@ class PlayerHeal(AbstractAbility):
 
         log.append(StatsChangeEvent(entity_containers))
         if healed:
-            log.append(BattleLogEvent(self.self_heal_key if self_heal else self.heal_key, data_dict={"ENTITY_NAME": lambda: name1.get_name(), "TARGET_NAME": lambda: name2.get_name(), "HEALTH": healed}))
+            log.append(BattleLogEvent(self.self_heal_key if self_heal else self.heal_key, data_dict={"ENTITY_NAME": wrap_key(name1.name_key), "TARGET_NAME": wrap_key(name2.name_key), "HEALTH": healed}))
 
             stats: StatsComponent = world.get_component(target_id, StatsComponent)
-            log.append(BattleLogEvent("entities.health_reminder", {"NAME": lambda: name2.get_name(), "HEALTH": stats.health}))
+            log.append(BattleLogEvent("entities.health_reminder", {"NAME": wrap_key(name2.name_key), "HEALTH": stats.health}))
         else:
-            log.append(BattleLogEvent(self.useless_heal_key, data_dict = {"ENTITY_NAME": lambda: name1.get_name(), "TARGET_NAME": lambda: name2.get_name()}))
+            log.append(BattleLogEvent(self.useless_heal_key, data_dict = {"ENTITY_NAME": wrap_key(name1.name_key), "TARGET_NAME": wrap_key(name2.name_key)}))
 
         return log
 
@@ -128,7 +129,7 @@ class BattleCry(AbstractAbility):
 
             key = self.apply_key_self if entity_id == target_id else self.apply_key
 
-            log.append(BattleLogEvent(key, {"ENTITY_NAME": lambda: name1.get_name(), "TARGET_NAME": lambda: name2.get_name(), "BONUS": int(self.bonus*100)}))
+            log.append(BattleLogEvent(key, {"ENTITY_NAME": wrap_key(name1.name_key), "TARGET_NAME": wrap_key(name2.name_key), "BONUS": int(self.bonus*100)}))
 
             return log
         

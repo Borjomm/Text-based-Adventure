@@ -8,6 +8,7 @@ from events.events import Event, StatsChangeEvent, BattleLogEvent
 from events.event_containers import AbilityContainer
 from .evaluators import evaluate_target_danger, evaluate_target_vulnerability
 from util.decorators import register_ability
+from util import wrap_key
 
 from typing import Self, List, Optional
 from random import randint
@@ -50,7 +51,7 @@ class BasicAttack(AbstractAbility):
             log.append(BattleLogEvent(name_a.attack_key, {"DAMAGE": amount}))
 
             stats_d: StatsComponent = world.get_component(target_id, StatsComponent)
-            log.append(BattleLogEvent("entities.health_reminder", {"NAME": lambda: name_d.get_name(), "HEALTH": stats_d.health}))
+            log.append(BattleLogEvent("entities.health_reminder", {"NAME": wrap_key(name_d.name_key), "HEALTH": stats_d.health}))
         else:
             log.append(BattleLogEvent(name_a.miss_key))
 

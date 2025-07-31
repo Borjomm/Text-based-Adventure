@@ -13,6 +13,8 @@ from engine.world import World
 from .systems.battle_systems import process_deaths, clear_enemy_entities, subscribe_for_fight, start_turn, end_turn, get_valid_target_set, update_buffs
 from .systems.wrappers import wrap_entity, wrap_entity_abilities
 
+from util import wrap_key
+
 import globals as g
 
 class BattleResolver:
@@ -54,7 +56,7 @@ class BattleResolver:
                 name_component: LocalizationComponent = self.world.get_component(entity_id, LocalizationComponent)
                 if buff_keys:
                     for key in buff_keys:
-                        self.engine.send(BattleLogEvent("abilities.buff_end", {"BUFF": lambda: g.loc.translate(key), "ENTITY_NAME": lambda: name_component.get_name()}))
+                        self.engine.send(BattleLogEvent("abilities.buff_end", {"BUFF": wrap_key(key), "ENTITY_NAME": wrap_key(name_component.name_key)}))
                 
                 #Player turn gets async treatment, we wait for it to finish
                 if self.world.get_component(entity_id, IsPlayerComponent):
@@ -74,7 +76,7 @@ class BattleResolver:
                     
                     name: LocalizationComponent = self.world.get_component(id, LocalizationComponent)
                     self.log.append(EntityDeathEvent(id))
-                    self.log.append(BattleLogEvent("entities.dead_reminder", {"NAME": lambda: name.get_name()}))
+                    self.log.append(BattleLogEvent("entities.dead_reminder", {"NAME": wrap_key(name.name_key)}))
 
                 end_turn(self.world, entity_id, action_value)
 

@@ -20,7 +20,7 @@ class StatsItem(MenuItem):
 
     def _update_dict_info(self):
         return {
-            "NAME": self.entity.get_name(),
+            "NAME": g.loc.translate(self.entity.key),
             "HP": self.entity.health,
             "MAX_HP": self.entity.max_health,
             "AP": self.entity.ap,

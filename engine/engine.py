@@ -42,7 +42,7 @@ class GameEngine:
     def create_player(self, name, player_class: PlayerClass):
          self.player_id  = self.entity_factory.create_player(self.world, player_class, name)
          g.logger.debug(f"Player {name} has been created successfully with class {player_class.name.lower()}")
-         #g.loc.add_to_unlocalizable(name)
+         g.loc.add_unlocalizable("player_name", name)
 
     def resume(self):
         self._running = True

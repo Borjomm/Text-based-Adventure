@@ -76,9 +76,7 @@ class LocalizationComponent:
     miss_key: str
     heal_key: str
     useless_heal_key: str
-    untranslatable_name: bool
 
-    def get_name(self) -> str:
-        if self.untranslatable_name:
-            return self.name_key
-        return g.loc.translate(self.name_key)
+@dataclass
+class PlayerDataComponent:
+    name: str

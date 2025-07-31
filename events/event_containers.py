@@ -13,12 +13,6 @@ class EntityContainer:
     ap: int
     max_ap: int
     attack: int
-    untranslatable: bool = False
-    
-    def get_name(self):
-        if self.untranslatable:
-            return self.key
-        return g.loc.translate(self.key)
     
 @dataclass
 class AbilityContainer:

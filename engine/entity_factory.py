@@ -8,7 +8,7 @@ from .blueprints import EntityBlueprint
 from global_state.game_consts import EntityType, PlayerClass, Defaults
 from .world import World
 from .ability_factory import AbilityFactory
-from .components.living_entity_components import StatsComponent, LocalizationComponent, IsEnemyComponent, IsPlayerComponent, IsAliveComponent, AbilitiesComponent, BuffsComponent
+from .components.living_entity_components import StatsComponent, LocalizationComponent, IsEnemyComponent, IsPlayerComponent, IsAliveComponent, AbilitiesComponent, BuffsComponent, PlayerDataComponent
 
 import globals as g
 
@@ -87,7 +87,7 @@ class EntityFactory:
             ap = data.get("start_ap", 1)
             max_ap = data.get("max_ap", 3)
 
-            name_key = f"player.{class_str}"  # Optional translation key like "classes.warrior"
+            name_key = "unloc.player_name"
 
             abilities = data.get('abilities')
             if abilities:
@@ -117,29 +117,26 @@ class EntityFactory:
                 player_class, blueprint = make_player(id, entry)
                 self._player_class_blueprints[player_class] = blueprint
 
-    def create_player(self, world: World, player_class: PlayerClass, name: Optional[str] = None) -> int:
+    def create_player(self, world: World, player_class: PlayerClass, name: str) -> int:
         blueprint = self._player_class_blueprints.get(player_class)
         if not blueprint:
             raise ValueError(f"No blueprint found for player class: {player_class}")
         return self.create_entity(world, blueprint, name)
 
     def create_entity(self, world: World, blueprint: EntityBlueprint, name: Optional[str] = None) -> int:
-        def make_localization(name_key, untranslatable: bool, name: Optional[str]) -> LocalizationComponent:
-            if not name:
-                name = name_key
-            return LocalizationComponent(name, f"{name_key}_flair", f"{name_key}_attack", f"{name_key}_miss", f"{name_key}_heal", f"{name_key}_useless_heal", untranslatable)
+        def make_localization(name_key) -> LocalizationComponent:
+            return LocalizationComponent(name_key, f"{name_key}_flair", f"{name_key}_attack", f"{name_key}_miss", f"{name_key}_heal", f"{name_key}_useless_heal")
 
         id = world.create_entity()
         component_list = []
-        untranslatable = False
         if blueprint.type == EntityType.PLAYER:
             component_list.append(IsPlayerComponent())
-            untranslatable = True
+            component_list.append(PlayerDataComponent(name))
         elif blueprint.type == EntityType.ENEMY:
             component_list.append(IsEnemyComponent())
         component_list.append(StatsComponent(health=blueprint.health, max_health=blueprint.health, attack=blueprint.attack, attack_offset=Defaults.ATTACK_OFFSET.value, ap=blueprint.ap, max_ap=blueprint.max_ap, speed=blueprint.speed))
         
-        component_list.append(make_localization(blueprint.name_key, untranslatable, name))
+        component_list.append(make_localization(blueprint.name_key))
         component_list.append(BuffsComponent())
         component_list.append(IsAliveComponent())
         if blueprint.abilities:
