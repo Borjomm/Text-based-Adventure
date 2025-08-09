@@ -1,9 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from events.events import StartBattleEvent, StatsChangeEvent, BattleLogEvent, StartPlayerTurnEvent, EndPlayerTurnEvent, EntityDeathEvent
+from events.events import StartBattleEvent, StatsChangeEvent, BattleLogEvent, StartPlayerTurnEvent, EndPlayerTurnEvent, EntityDeathEvent, ApplicationExitEvent
 from .layouts.battle_screen import BattleScreen
-from events.event_containers import EntityContainer
 
 from .widgets.stats_item import StatsItem
 
@@ -34,6 +33,8 @@ class UiEventParser:
                     self.add_battle_log(event)
                 case EntityDeathEvent():
                     self.handle_death(event.entity_id)
+                case ApplicationExitEvent():
+                    self.controller.exit_game()
                 case _:
                     g.logger.warning(f"Unknown event: {event}")
 
@@ -41,12 +42,12 @@ class UiEventParser:
 
 
     def start_battle(self, event:StartBattleEvent):
-        screen = BattleScreen(g.ui.current_screen, event.heroes, event.enemies)
-        g.ui.battle_screen = screen
-        g.ui.switch_screen(screen)
+        screen = BattleScreen(self.controller, self.controller.current_screen, event.heroes, event.enemies)
+        self.controller.battle_screen = screen
+        self.controller.switch_screen(screen)
 
     def replace_entities(self, event:StatsChangeEvent):
-        screen = g.ui.battle_screen
+        screen = self.controller.battle_screen
         if not isinstance(screen, BattleScreen):
             g.logger.warning("Tried to give entity stats while not on battle screen, skipping")
             return
@@ -57,7 +58,7 @@ class UiEventParser:
         screen.refresh_stats()
 
     def start_player_turn(self, event:StartPlayerTurnEvent):
-        screen = g.ui.battle_screen
+        screen = self.controller.battle_screen
         if not isinstance(screen, BattleScreen):
             g.logger.warning("Tried to give entity stats while not on battle screen, skipping")
             return
@@ -65,7 +66,7 @@ class UiEventParser:
         screen.open_abilities(event.abilities)
 
     def end_player_turn(self):
-        screen = g.ui.battle_screen
+        screen = self.controller.battle_screen
         if not isinstance(screen, BattleScreen):
             g.logger.warning("Tried to give entity stats while not on battle screen, skipping")
             return
@@ -73,7 +74,7 @@ class UiEventParser:
         screen.close_abilities()
 
     def add_battle_log(self, event: BattleLogEvent):
-        screen = g.ui.battle_screen
+        screen = self.controller.battle_screen
         if not isinstance(screen, BattleScreen):
             g.logger.warning("Tried to append battle log while not on battle screen, skipping")
             return
@@ -81,7 +82,7 @@ class UiEventParser:
 
 
     def handle_death(self, entity_id):
-        screen = g.ui.battle_screen
+        screen = self.controller.battle_screen
         if not isinstance(screen, BattleScreen):
             g.logger.warning("Tried to process death event while not on battle screen, skipping")
             return

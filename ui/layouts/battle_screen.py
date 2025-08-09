@@ -1,9 +1,14 @@
 from prompt_toolkit.layout import HSplit, Window
 from prompt_toolkit.widgets import Frame
 
+from typing import Optional, TYPE_CHECKING
+
 from .abstract_screen import AbstractScreen
 from .settings_screen import SettingsScreen
 from ..widgets import *
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
 
 import globals as g
 import asyncio
@@ -14,9 +19,9 @@ from events.event_containers import EntityContainer, AbilityContainer
 from events.events import PlayerActionEvent, RefreshLogEvent
 
 class BattleScreen(AbstractScreen):
-    def __init__(self, parent: AbstractScreen, heroes: list[EntityContainer], enemies: list[EntityContainer]):
-        super().__init__(parent)
-        self.current_hero_id = None
+    def __init__(self, controller : "UiController", parent: AbstractScreen, heroes: list[EntityContainer], enemies: list[EntityContainer]):
+        super().__init__(controller, parent)
+        self.current_hero_id: Optional[int] = None
         self.title = TextItem(key="ui.battle_screen", height=3)
         self.separator = Window(height=1, char="─")
         self.build_stats(heroes, enemies)
@@ -120,7 +125,7 @@ class BattleScreen(AbstractScreen):
                 self.stats_menu.selectable = False
                 self.action_menu.selectable = True
             else:
-                g.ui.switch_screen(SettingsScreen(self))
+                self.controller.switch_screen(SettingsScreen(self.controller, self, in_game=True))
 
         return kb
 
@@ -173,7 +178,7 @@ class BattleScreen(AbstractScreen):
             g.logger.warning(f"Entity_id is 'None'. Are you sure this is your turn?")
             return
         g.logger.debug(f"Received entity_id {target_id} with ability id {ability_id} for {entity_id}")
-        g.ui.ui_to_engine_queue.put_nowait(PlayerActionEvent(ability_id, entity_id, target_id))
+        self.controller.ui_to_engine_queue.put_nowait(PlayerActionEvent(ability_id, entity_id, target_id))
         pass
 
     def cleanup(self):

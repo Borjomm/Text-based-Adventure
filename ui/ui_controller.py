@@ -8,6 +8,7 @@ import asyncio
 from ui.layouts import TitleScreen, AbstractScreen, BattleScreen
 from .ui_event_parser import UiEventParser
 
+from events.events import EngineStopEvent
 import globals as g
 from util import NormalizedKeyBindings
 
@@ -23,7 +24,7 @@ class UiController:
 
         self.build_global_keybindings()
 
-        self.current_screen = TitleScreen(self)
+        self.current_screen = TitleScreen(self, None)
         self.previous_screen = self.current_screen
         self.layout = Layout(
             self.current_screen.container
@@ -36,6 +37,7 @@ class UiController:
             refresh_interval=1/g.config.main.refresh_rate
         )
         g.logger.info(f"Window refresh rate set to {g.config.main.refresh_rate} FPS")
+        g.loc.subscribe(self, self.current_screen.refresh_all)
 
     def redraw_layout(self):
         self.layout = Layout(
@@ -51,7 +53,8 @@ class UiController:
         
     def exit_game(self):
         self.closing = True
-        g.engine.stop()
+        g.loc.unsubscribe(self)
+        self.ui_to_engine_queue.put_nowait(EngineStopEvent())
 
     def get_keybindings(self):
         

@@ -5,7 +5,7 @@ import asyncio
 if TYPE_CHECKING:
     from .engine import GameEngine
 
-from events.events import GameStartEvent, PlayerActionEvent, GameStopEvent
+from events.events import GameStartEvent, PlayerActionEvent, GameStopEvent, EnginePauseEvent, EngineResumeEvent, EngineStopEvent
 
 class EngineEventParser:
     def __init__(self, ui_to_engine_queue: asyncio.Queue, controller: GameEngine):
@@ -29,4 +29,10 @@ class EngineEventParser:
                         asyncio.create_task(self.engine.battle_resolver.execute_player_action(event))
                 case GameStopEvent():
                     self.engine.stop_game()
+                case EnginePauseEvent():
+                    self.engine.pause()
+                case EngineResumeEvent():
+                    self.engine.resume()
+                case EngineStopEvent():
+                    self.engine.stop()
 

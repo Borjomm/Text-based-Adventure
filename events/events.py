@@ -63,4 +63,16 @@ class EndPlayerTurnEvent(Event):
 @dataclass
 class GameStopEvent(Event):
     pass
+
+class EnginePauseEvent(Event):
+    pass
+
+class EngineResumeEvent(Event):
+    pass
+
+class EngineStopEvent(Event):
+    pass
+
+class ApplicationExitEvent(Event):
+    pass
     

@@ -1,18 +1,22 @@
 from prompt_toolkit.layout import HSplit, Window
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
 
 from ui.widgets import MenuItem, TextItem, MenuContainer
 from .abstract_screen import AbstractScreen
 from .settings_screen import SettingsScreen
 from .character_creation_screen import CharacterCreationScreen
 
+from events.events import EnginePauseEvent
 import globals as g
 from util import NormalizedKeyBindings
 
 class TitleScreen(AbstractScreen):
-    def __init__(self, parent):
-        super().__init__(parent)
-        if g.engine:
-            g.engine.pause()
+    def __init__(self, controller: "UiController", parent: Optional[AbstractScreen]):
+        super().__init__(controller, parent)
+        self.controller.ui_to_engine_queue.put_nowait(EnginePauseEvent())
         self.selected_index = 0
         
         
@@ -77,14 +81,14 @@ class TitleScreen(AbstractScreen):
     def _start_new(self):
         # called when user hits Enter on “New game”
         g.logger.debug("New game")
-        g.ui.switch_screen(CharacterCreationScreen(self))
+        self.controller.switch_screen(CharacterCreationScreen(self.controller, self))
 
     def _load_game(self):
         g.logger.debug("Game loading")
 
     def _open_settings(self):
         g.logger.info("Settings accessed")
-        g.ui.switch_screen(SettingsScreen(self))
+        self.controller.switch_screen(SettingsScreen(self.controller, self, in_game=False))
 
 
     def _init_exit(self):
@@ -97,7 +101,7 @@ class TitleScreen(AbstractScreen):
 
     def _exit_game(self):
         g.logger.warning("Exiting")
-        g.ui.exit_game()
+        self.controller.exit_game()
 
     def _exit_keybinds(self) -> NormalizedKeyBindings:
         kb = NormalizedKeyBindings()

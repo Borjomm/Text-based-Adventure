@@ -2,7 +2,7 @@ from engine.engine import GameEngine
 from config.config import Config
 from logger.log_screen import Logger
 from ui.ui_controller import UiController
-from ui.translator import LocalizationManager
+from translator import LocalizationManager
 
 import globals as g
 
@@ -31,10 +31,8 @@ class Client:
         g.loc = self.loc
         
         self.ui = UiController(self.engine_to_ui_queue, self.ui_to_engine_queue)
-        g.ui = self.ui
 
         self.engine = GameEngine(self.ui_to_engine_queue, self.engine_to_ui_queue)
-        g.engine = self.engine
 
     async def run(self):
         await asyncio.gather(

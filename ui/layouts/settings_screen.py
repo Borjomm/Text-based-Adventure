@@ -1,5 +1,9 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 from .abstract_screen import AbstractScreen
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
 
 from ..widgets import KeybindMenuItem, TextItem, MenuItem, SelectionMenuItem, SettingItem, MenuContainer
 
@@ -13,8 +17,8 @@ from global_state.consts import LANGUAGES
 from events.events import GameStopEvent
 
 class SettingsScreen(AbstractScreen):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, controller: "UiController", parent: AbstractScreen, in_game: bool):
+        super().__init__(controller, parent)
         language_options = [SettingItem(key=f"ui.{lang}", option=lang) for lang in LANGUAGES]
         self.selected_index = 0
         self.selected_h_index = 0
@@ -24,6 +28,7 @@ class SettingsScreen(AbstractScreen):
         self.tooltip = TextItem(key="ui.tooltip_settings")
         self.back = MenuItem(key="ui.back", handler=self.exit)
         self.to_title = MenuItem(key="ui.to_title", handler=self.to_title_screen)
+        self.in_game = in_game
         
         # 2. When creating MenuItems, pass width=D()
         #    (Assuming you updated MenuItem to accept a `width` parameter)
@@ -33,7 +38,7 @@ class SettingsScreen(AbstractScreen):
         ]
         
         self.tab_containers: list[list[TextItem]] = [
-            [KeybindMenuItem(key=f"ui.{key}", config_key=key, screen=self) for key, entry in g.config.keys.option_dict.items() if not entry.fixed],
+            [KeybindMenuItem(key=f"ui.{key}", config_key=key, screen=self, controller=self.controller) for key, entry in g.config.keys.option_dict.items() if not entry.fixed],
             [SelectionMenuItem(
                 key="ui.change_language",
                 screen=self, 
@@ -51,7 +56,7 @@ class SettingsScreen(AbstractScreen):
             self.back,
             None
         ]
-        if g.engine.is_running():
+        if self.in_game:
             list_container.append(self.to_title)
         self.current_menu_container = MenuContainer(list_container)
     
@@ -66,10 +71,10 @@ class SettingsScreen(AbstractScreen):
     def to_title_screen(self):
         from .title_screen import TitleScreen
         g.config.save()
-        g.ui.battle_screen = None
-        g.ui.ui_to_engine_queue.put_nowait(GameStopEvent())
-        g.ui.broadcast_cleanup()
-        g.ui.switch_screen(TitleScreen(g.ui))
+        self.controller.battle_screen = None
+        self.controller.ui_to_engine_queue.put_nowait(GameStopEvent())
+        self.controller.broadcast_cleanup()
+        self.controller.switch_screen(TitleScreen(self.controller, None))
 
     # 3. Update the _build_container method
     def _build_container(self):

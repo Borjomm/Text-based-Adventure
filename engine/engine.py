@@ -10,6 +10,7 @@ from global_state.game_consts import PlayerClass
 from .engine_event_parser import EngineEventParser
 from .battle_resolver import BattleResolver
 from .world import World
+from events.events import ApplicationExitEvent
 
 class GameEngine:
     def __init__(self, ui_to_engine_queue: asyncio.Queue, engine_to_ui_queue: asyncio.Queue):
@@ -37,7 +38,7 @@ class GameEngine:
 
                 await asyncio.sleep(sleep_duration)
             #Logger output here, possible savegame
-            g.ui.app.exit()
+            self.engine_to_ui_queue.put_nowait(ApplicationExitEvent())
 
     def create_player(self, name, player_class: PlayerClass):
          self.player_id  = self.entity_factory.create_player(self.world, player_class, name)

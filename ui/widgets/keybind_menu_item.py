@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
 
 from .text_item import TextItem
 from ..layouts.abstract_screen import AbstractScreen
@@ -12,6 +15,7 @@ import globals as g
 class KeybindMenuItem(TextItem):
     config_key: str
     screen: AbstractScreen
+    controller: "UiController"
     on_close_handler: Callable[[], None] = None
     waiting_for_key: bool = field(init=False, default=False)
     h_offset:int = 0
@@ -35,7 +39,7 @@ class KeybindMenuItem(TextItem):
         self.waiting_for_key = True
         prompt_text = f"Press a new key for {g.loc.translate(self.key)} or [quit_key] to cancel..."
         self.control.text = parse_text(f"[yellow]{prompt_text}", prefix=self.prefix)
-        g.ui.keybind_override = True
+        self.controller.keybind_override = True
 
         kb = NormalizedKeyBindings()
 
@@ -44,7 +48,7 @@ class KeybindMenuItem(TextItem):
             self.waiting_for_key = False
             self.refresh_text(selected=True)
             self.screen.set_keybindings()
-            g.ui.keybind_override = False
+            self.controller.keybind_override = False
 
         @kb.add("<any>")
         def _(event):
@@ -52,9 +56,9 @@ class KeybindMenuItem(TextItem):
             normalized_key = CYRILLIC_TO_LATIN.get(raw_key, raw_key)
             setattr(g.config.keys, self.config_key, normalized_key)
             self.waiting_for_key = False
-            g.ui.build_global_keybindings()
+            self.controller.build_global_keybindings()
             self.screen.set_keybindings()
             self.screen.refresh_all()
-            g.ui.keybind_override = False
+            self.controller.keybind_override = False
 
         self.screen.set_keybindings(kb)

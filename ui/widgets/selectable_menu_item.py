@@ -58,7 +58,7 @@ class SelectionMenuItem(TextItem):
         self.window = self._build_opened()
         self._last_index = self.selected_index
         self.screen.set_keybindings(self._get_keybindings())
-        g.ui.current_screen.regenerate_container()
+        self.screen.regenerate_container()
 
     def get_option(self) -> str:
         return self.options[self.selected_index].option

@@ -5,12 +5,20 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.dimension import D
 from util import parse_text, NormalizedKeyBindings
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
+    from ..layouts import AbstractScreen
+
 from .text_item import TextItem
 import globals as g
 
 @dataclass(kw_only=True)
 class TextInputItem(TextItem):
     key: str
+    screen: "AbstractScreen"
+    controller: "UiController"
     default: str = ""
     height: int = 1
     width: int | None = None
@@ -100,18 +108,18 @@ class TextInputItem(TextItem):
         self._editing = False
         self.window = self._label_window
         self.refresh_text(selected=True)
-        g.ui.current_screen.set_keybindings()
-        g.ui.current_screen.regenerate_container()
-        g.ui.keybind_override = False
+        self.screen.set_keybindings()
+        self.screen.regenerate_container()
+        self.controller.keybind_override = False
 
     def handler(self):
         self._editing = True
         self._input_area.text = self._text
         self._input_area.buffer.cursor_position = len(self._text)
         self.window = self._input_vsplit
-        g.ui.current_screen.set_keybindings(self._get_keybindings())
-        g.ui.current_screen.regenerate_container()
-        g.ui.app.layout.focus(self._input_area)
-        g.ui.keybind_override = True
+        self.screen.set_keybindings(self._get_keybindings())
+        self.screen.regenerate_container()
+        self.controller.app.layout.focus(self._input_area)
+        self.controller.keybind_override = True
             # Enter edit mode
             

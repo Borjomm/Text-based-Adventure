@@ -1,5 +1,6 @@
 
 from prompt_toolkit.layout import HSplit, FormattedTextControl, Window
+from prompt_toolkit.application import get_app
 from prompt_toolkit.widgets import Frame
 from prompt_toolkit.formatted_text import to_formatted_text, FormattedText
 from collections import deque
@@ -99,7 +100,7 @@ class LogWindow:
         for control, message in zip(instant_controls_slice, messages):
             control.text = message
             
-        g.ui.app.invalidate()
+        get_app().invalidate()
 
         # --- Step 4: If there's a new log, typewrite it into the last position ---
         if write_new and self.logs:
@@ -125,7 +126,7 @@ class LogWindow:
             clear_before_start: If True, clears the control's text before starting.
         """
         self.writing = True
-        app = g.ui.app # Get the current prompt_toolkit application instance
+        app = get_app()
         localized_str = g.loc.translate(event.message_key)
         ansi_object = parse_text(localized_str, format_template=event.data_dict)
 

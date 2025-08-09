@@ -9,6 +9,7 @@ from global_state.consts import LANGUAGES, DEFAULT_LANG, ALWAYS_LOADED
 class LocalizationManager:
     def __init__(self, locale_dir: str = "locales", lang: str = DEFAULT_LANG):
         self.locale_dir = locale_dir
+        self._subscribers = {}
         valid_lang = lang in LANGUAGES
         self.current_lang = lang if valid_lang else DEFAULT_LANG
         self._cache: Dict[str, Dict[str, str]] = {}
@@ -19,6 +20,13 @@ class LocalizationManager:
         for cat in self._always_loaded:
             self._load_file(cat)
 
+    def subscribe(self, instance, callback: callable):
+        self._subscribers[instance] = callback
+
+    def unsubscribe(self, instance):
+        if self._subscribers[instance]:
+            del self._subscribers[instance]
+
     def set_language(self, lang: str):
         if self.current_lang == lang:
             return
@@ -27,7 +35,8 @@ class LocalizationManager:
         for cat in self._always_loaded:
             self._load_file(cat)
         g.config.main.language = lang
-        g.ui.current_screen.refresh_all()
+        for func in self._subscribers.values():
+            func()
 
     def _load_file(self, category: str):
         path = os.path.join(self.locale_dir, self.current_lang, f"{category}.yaml")

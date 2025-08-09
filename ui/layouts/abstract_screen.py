@@ -1,14 +1,19 @@
 from prompt_toolkit.layout import Container, Window
 from abc import abstractmethod
 
+from typing import TYPE_CHECKING, Self, Optional
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
+
 import globals as g
 
 from util import NormalizedKeyBindings
 
 
 class AbstractScreen:
-    def __init__(self, parent):
+    def __init__(self, controller: "UiController", parent: Optional[Self]):
         self.parent = parent
+        self.controller = controller
         self._container = None
         self.set_keybindings()
 
@@ -32,7 +37,7 @@ class AbstractScreen:
 
     def regenerate_container(self):
         self.container = self._build_container()
-        g.ui.redraw_layout()
+        self.controller.redraw_layout()
     
     def get_keybindings(self) -> NormalizedKeyBindings:
         return self.kb
@@ -56,11 +61,11 @@ class AbstractScreen:
             self.kb = self._get_default_keybindings()
 
     def exit(self):
-        if isinstance(self.parent, AbstractScreen):
-            g.ui.switch_screen(self.parent)
-            g.ui.current_screen.refresh_all()
+        if self.parent:
+            self.controller.switch_screen(self.parent)
+            self.controller.current_screen.refresh_all()
         else:
-            g.logger.warning("Tried to exit to parent screen, parent is not an instance of 'AbstractScreen'")
+            g.logger.warning("Tried to exit to parent screen, no parent found")
 
     def cleanup(self):
         pass

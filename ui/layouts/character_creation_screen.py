@@ -1,5 +1,10 @@
 from prompt_toolkit.layout import HSplit, Window
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ui.ui_controller import UiController
+
 from .abstract_screen import AbstractScreen
 from ..widgets import *
 
@@ -7,15 +12,15 @@ import globals as g
 from util import NormalizedKeyBindings
 from global_state.game_consts import PlayerClass
 
-from events.events import GameStartEvent
+from events.events import GameStartEvent, EngineResumeEvent
 
 class CharacterCreationScreen(AbstractScreen):
-    def __init__(self, parent: AbstractScreen):
-        super().__init__(parent)
+    def __init__(self, controller: "UiController", parent: AbstractScreen):
+        super().__init__(controller, parent)
         class_options = [SettingItem(key=f"ui.{c.name.lower()}", option=c.name) for c in PlayerClass]
         self.title = TextItem(key="ui.create_character", height=3)
         self.separator = Window(height=1, char="─")
-        self.name_selector = TextInputItem(key="ui.enter_name")
+        self.name_selector = TextInputItem(key="ui.enter_name", screen=self, controller=self.controller)
         self.class_selector = SelectionMenuItem(key="ui.select_class", screen=self, options=class_options, selected_index=0)
         
         self.menu_items = MenuContainer([
@@ -54,12 +59,12 @@ class CharacterCreationScreen(AbstractScreen):
         if not name:
             self.tooltip.set_temp_key("ui.blank_name", 1)
             return
-        g.engine.resume()
         name = self.name_selector.get_text()
         player_class_str = self.class_selector.get_option()
         player_class = self.class_map[player_class_str]
+        self.controller.ui_to_engine_queue.put_nowait(EngineResumeEvent())
         event = GameStartEvent(name, player_class)
-        g.ui.ui_to_engine_queue.put_nowait(event)
+        self.controller.ui_to_engine_queue.put_nowait(event)
 
     def _build_container(self) -> HSplit:
         """Builds the layout container from the current state of its children."""
